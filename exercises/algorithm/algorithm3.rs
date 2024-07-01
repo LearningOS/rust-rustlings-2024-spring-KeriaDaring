@@ -7,6 +7,9 @@
 
 fn sort<T>(array: &mut [T]){
 	//TODO
+    for i in 0..array.len() {
+        // 完成八大排序修炼
+    }
 }
 #[cfg(test)]
 mod tests {

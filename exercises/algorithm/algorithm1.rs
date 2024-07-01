@@ -2,7 +2,7 @@
 	single linked list merge
 	This problem requires you to merge two ordered singly linked lists into one ordered singly linked list
 */
-// I AM NOT DONE
+
 
 use std::fmt::{self, Display, Formatter};
 use std::ptr::NonNull;
@@ -29,13 +29,13 @@ struct LinkedList<T> {
     end: Option<NonNull<Node<T>>>,
 }
 
-impl<T> Default for LinkedList<T> {
-    fn default() -> Self {
-        Self::new()
-    }
-}
+// impl<T> Default for LinkedList<T> {
+//     fn default() -> Self {
+//         Self::new()
+//     }
+// }
 
-impl<T> LinkedList<T> {
+impl<T: std::cmp::PartialOrd + Clone> LinkedList<T> {
     pub fn new() -> Self {
         Self {
             length: 0,
@@ -69,14 +69,55 @@ impl<T> LinkedList<T> {
             },
         }
     }
-	pub fn merge(list_a:LinkedList<T>,list_b:LinkedList<T>) -> Self
+	pub fn merge(mut list_a:LinkedList<T>,mut list_b:LinkedList<T>) -> Self
 	{
 		//TODO
-		Self {
+		let mut result = Self {
             length: 0,
             start: None,
             end: None,
+        };
+        let mut ptr_a = 0;
+        let mut ptr_b = 0;
+        loop {
+            match list_a.get(ptr_a) {
+                Some(value_1) => {
+                    match list_b.get(ptr_b) {
+                        Some(value_2) => {
+                            if value_1 < value_2 {
+                                result.add(value_1.clone());
+                                ptr_a += 1;
+                            } else {
+                                result.add(value_2.clone());
+                                ptr_b += 1;
+                            }
+                        },
+                        None => {
+                            for i in ptr_a..list_a.length as i32 {
+                                result.add(list_a.get(i).expect("error").clone());
+                            }
+                            break;
+                        }
+                    }
+                },
+                None => {
+                    match list_b.get(ptr_b) {
+                        Some(value) => {
+                            for i in ptr_b..list_b.length as i32 {
+                                result.add(list_b.get(i).expect("error").clone());
+                            }
+                            break;
+                        },
+                        None => {
+                            break;
+                        }
+                    }
+                }
+            }
+            
         }
+        result
+        
 	}
 }
 
