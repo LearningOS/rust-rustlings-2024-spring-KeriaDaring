@@ -1,8 +1,8 @@
 /*
-	graph
-	This problem requires you to implement a basic graph functio
+    graph
+    This problem requires you to implement a basic graph functio
 */
-// I AM NOT DONE
+
 
 use std::collections::{HashMap, HashSet};
 use std::fmt;
@@ -30,6 +30,21 @@ impl Graph for UndirectedGraph {
     }
     fn add_edge(&mut self, edge: (&str, &str, i32)) {
         //TODO
+        let (from, to, weight) = edge;
+        let from = from.to_string();
+        let to = to.to_string();
+
+        if let Some(neighbors) = self.adjacency_table_mutable().get_mut(&from) {
+            neighbors.push((to.clone(), weight));
+        } else {
+            self.adjacency_table_mutable()
+                .insert(from.clone(), vec![(to.clone(), weight)]);
+        }
+        if let Some(neighbors) = self.adjacency_table_mutable().get_mut(&to) {
+            neighbors.push((from, weight));
+        } else {
+            self.adjacency_table_mutable().insert(to, vec![(from, weight)]);
+        }
     }
 }
 pub trait Graph {
@@ -38,7 +53,7 @@ pub trait Graph {
     fn adjacency_table(&self) -> &HashMap<String, Vec<(String, i32)>>;
     fn add_node(&mut self, node: &str) -> bool {
         //TODO
-		true
+        true
     }
     fn add_edge(&mut self, edge: (&str, &str, i32)) {
         //TODO
@@ -78,6 +93,7 @@ mod test_undirected_graph {
             (&String::from("c"), &String::from("b"), 10),
         ];
         for edge in expected_edges.iter() {
+            println!("{:?}", edge);
             assert_eq!(graph.edges().contains(edge), true);
         }
     }

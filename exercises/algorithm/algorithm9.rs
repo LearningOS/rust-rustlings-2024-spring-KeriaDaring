@@ -2,9 +2,8 @@
 	heap
 	This question requires you to implement a binary heap function
 */
-// I AM NOT DONE
-
-use std::cmp::{Ord, Ordering};
+use std::clone::Clone;
+use std::cmp::Ord;
 use std::default::Default;
 
 pub struct Heap<T>
@@ -38,23 +37,34 @@ where
 
     pub fn add(&mut self, value: T) {
         //TODO
-        if self.count == 0 {
-            self.items.push(value);
-            self.count += 1;
-            return;
-        }
-        let mut idx = 0;
-        while idx <= self.count {
-            match (self.comparator)(&self.items[idx],&value) {
-                false => {
-                    idx = 2 * idx + 1;
-                },
-                true => {
-                    idx = 2 * idx + 2;
-                }
+        self.count += 1;
+        self.items.push(value);
+        let idx = self.count;
+        self.heapify_up(idx);
+    }
+    
+    fn heapify_down(&mut self, mut idx: usize) {
+        while idx < self.count {
+            let smallest_child_idx = self.smallest_child_idx(idx);
+            if (self.comparator)(&self.items[idx], &self.items[smallest_child_idx]) {
+                self.items.swap(smallest_child_idx, idx);
+                idx = smallest_child_idx;
+            } else {
+                break;
             }
         }
-        self.count += 1;
+    }
+
+    fn heapify_up(&mut self, mut idx: usize) {
+        while idx > 1 {
+            let parent_idx = self.parent_idx(idx);
+            if (self.comparator)(&self.items[idx], &self.items[parent_idx]) {
+                self.items.swap(parent_idx, idx);
+                idx = parent_idx;
+            } else {
+                break;
+            }
+        }
     }
 
     fn parent_idx(&self, idx: usize) -> usize {
@@ -75,7 +85,15 @@ where
 
     fn smallest_child_idx(&self, idx: usize) -> usize {
         //TODO
-		0
+        let left = self.left_child_idx(idx) - 1;
+        let right = self.right_child_idx(idx) - 1;
+        if right > self.count {
+            left
+        } else if (self.comparator)(&self.items[left], &self.items[right]) {
+            left
+        } else {
+            right
+        }
     }
 }
 
@@ -102,7 +120,13 @@ where
 
     fn next(&mut self) -> Option<T> {
         //TODO
-		None
+		if self.len() == 0 {
+            return None;
+        }
+        let result = self.items.remove(1);
+        self.count -= 1;
+        self.heapify_down(1);
+        Some(result)
     }
 }
 
