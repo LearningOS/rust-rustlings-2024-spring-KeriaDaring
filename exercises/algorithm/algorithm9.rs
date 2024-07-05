@@ -4,7 +4,7 @@
 */
 // I AM NOT DONE
 
-use std::cmp::Ord;
+use std::cmp::{Ord, Ordering};
 use std::default::Default;
 
 pub struct Heap<T>
@@ -38,6 +38,23 @@ where
 
     pub fn add(&mut self, value: T) {
         //TODO
+        if self.count == 0 {
+            self.items.push(value);
+            self.count += 1;
+            return;
+        }
+        let mut idx = 0;
+        while idx <= self.count {
+            match (self.comparator)(&self.items[idx],&value) {
+                false => {
+                    idx = 2 * idx + 1;
+                },
+                true => {
+                    idx = 2 * idx + 2;
+                }
+            }
+        }
+        self.count += 1;
     }
 
     fn parent_idx(&self, idx: usize) -> usize {
